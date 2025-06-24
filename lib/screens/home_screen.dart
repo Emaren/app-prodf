@@ -1,106 +1,120 @@
-import 'dart:convert';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
-import 'login_screen.dart'; // 🔁 Needed for logout routing
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:app_prodf/utils/web_link.dart';
 
-class HomeScreen extends StatefulWidget {
+import 'login_screen.dart';
+import 'profile_screen.dart';
+
+class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
-  @override
-  State<HomeScreen> createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<HomeScreen> {
-  User? _user;
-  Map<String, dynamic>? _backendData;
-  String? _error;
-
-  @override
-  void initState() {
-    super.initState();
-    _initUser();
-  }
-
-  Future<void> _initUser() async {
-    try {
-      final user = FirebaseAuth.instance.currentUser;
-      final token = await user?.getIdToken();
-
-      setState(() => _user = user);
-
-      final data = await fetchProtectedUserData(token!);
-      setState(() => _backendData = data);
-    } catch (e) {
-      setState(() => _error = 'Failed to load user data: $e');
-    }
-  }
-
-  Future<Map<String, dynamic>> fetchProtectedUserData(String idToken) async {
-    final uri = Uri.parse('https://api-prodf.aoe2hdbets.com/api/user/me');
-    final response = await http.get(uri, headers: {
-      'Authorization': 'Bearer $idToken',
-      'Content-Type': 'application/json',
-    });
-
-    if (response.statusCode == 200) {
-      return jsonDecode(response.body);
-    } else {
-      throw Exception('Backend error: ${response.statusCode}');
-    }
-  }
-
-  void _logout() async {
+  Future<void> _logout(BuildContext context) async {
     await FirebaseAuth.instance.signOut();
-    if (mounted) {
+    if (context.mounted) {
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => const LoginScreen()),
+        MaterialPageRoute(builder: (_) => const LoginScreen()),
       );
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_error != null) {
-      return Scaffold(
-        appBar: AppBar(title: const Text('Home')),
-        body: Center(child: Text(_error!)),
-      );
-    }
-
-    if (_user == null || _backendData == null) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
-    }
+    final user = FirebaseAuth.instance.currentUser;
+    final inGameName = user?.displayName ?? user?.email ?? 'Player';
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Home')),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Firebase UID: ${_user!.uid}'),
-            Text('Email: ${_user!.email ?? "N/A"}'),
-            const SizedBox(height: 20),
-            const Text(
-              'Private Backend Data:',
-              style: TextStyle(fontWeight: FontWeight.bold),
+      backgroundColor: const Color(0xFF121212),
+      body: Stack(
+        children: [
+          Positioned(
+            top: 16,
+            left: 16,
+            child: GestureDetector(
+              onTap: () => openInBrowser('https://explorer.aoe2hdbets.com'),
+              child: Image.asset(
+                'assets/wolo_emblem.png',
+                width: 60,
+              ),
             ),
-            Text('In-Game Name: ${_backendData!["in_game_name"] ?? "Unknown"}'),
-            Text('UID: ${_backendData!["uid"]}'),
-            Text('Email: ${_backendData!["email"]}'),
-            Text('Admin: ${_backendData!["is_admin"] ?? false}'),
-            Text('Verified: ${_backendData!["verified"] ?? false}'),
-            const SizedBox(height: 30),
-            ElevatedButton(
-              onPressed: _logout,
-              child: const Text('Logout'),
+          ),
+          Positioned(
+            top: 16,
+            right: 16,
+            child: Row(
+              children: [
+                TextButton(
+                  onPressed: () {
+                    debugPrint('Connect Wallet pressed');
+                  },
+                  child: const Text('Connect Wallet', style: TextStyle(color: Colors.white)),
+                ),
+                const SizedBox(width: 8),
+                DropdownButtonHideUnderline(
+                  child: DropdownButton<String>(
+                    dropdownColor: Colors.white,
+                    icon: const Icon(Icons.arrow_drop_down, color: Colors.white),
+                    style: const TextStyle(color: Colors.black),
+                    value: 'menu',
+                    items: [
+                      DropdownMenuItem(
+                        value: 'menu',
+                        enabled: false,
+                        child: Text(
+                          inGameName,
+                          style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      const DropdownMenuItem(value: 'profile', child: Text('👤 Profile')),
+                      const DropdownMenuItem(value: 'logout', child: Text('🚪 Logout')),
+                    ],
+                    onChanged: (value) {
+                      switch (value) {
+                        case 'profile':
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (_) => const ProfileScreen()),
+                          );
+                          break;
+                        case 'logout':
+                          _logout(context);
+                          break;
+                      }
+                    },
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+          const Center(
+            child: Text(
+              'Welcome to the Arena',
+              style: TextStyle(
+                color: Color(0xFFFFD700),
+                fontSize: 26,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 1.5,
+              ),
+            ),
+          ),
+          Positioned(
+            bottom: 24,
+            left: 0,
+            right: 0,
+            child: GestureDetector(
+              onTap: () => openInBrowser('https://discord.gg/EfghKZY7U9'),
+              child: Center(
+                child: SvgPicture.asset(
+                  'assets/discord_white.svg',
+                  width: 32,
+                  colorFilter: const ColorFilter.mode(Colors.white70, BlendMode.srcIn),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
 }
+
