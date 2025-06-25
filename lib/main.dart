@@ -5,7 +5,9 @@ import 'package:firebase_core/firebase_core.dart';
 
 import 'firebase_options.dart';
 import 'screens/login_screen.dart';
-import 'screens/home_screen.dart'; // ✅ add this
+import 'screens/home_screen.dart';
+import 'screens/register_screen.dart';
+import 'screens/profile_screen.dart'; // for /setup
 
 /// Flutter-web entry-point with aggressive error surfacing.
 Future<void> main() async {
@@ -45,7 +47,9 @@ class MyApp extends StatelessWidget {
         ),
         home: const LoginScreen(),
         routes: {
-          '/home': (context) => const HomeScreen(), // ✅ added route
+          '/home': (_) => const HomeScreen(),
+          '/register': (_) => const RegisterScreen(),
+          '/setup': (_) => const ProfileScreen(),
         },
       );
 }
