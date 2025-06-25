@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:firebase_auth/firebase_auth.dart';
+import '../constants.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -32,7 +33,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
       }
 
       final resp = await http.get(
-        Uri.parse('http://localhost:8002/api/user/me'),
+        
+Uri.parse('$apiBase/user/me'),
         headers: {
           'Authorization': 'Bearer $rawToken',
           'Content-Type': 'application/json',

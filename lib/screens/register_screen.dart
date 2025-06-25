@@ -2,11 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
-
-const String flutterEnv = String.fromEnvironment('FLUTTER_ENV');
-const String apiBase = flutterEnv == 'prod'
-    ? 'https://api-prodf.aoe2hdbets.com'
-    : 'http://localhost:8002';
+import '../constants.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});

@@ -28,7 +28,10 @@
       const flutterServiceWorkerVersion = null;
     </script>
 
-    <!-- Boots the Flutter engine; keep it last in <head> and defer-loaded -->
+    <!-- ✅ Inject the Keplr chain definition -->
+    <script src="suggest_chain.js"></script>
+
+    <!-- 🚀 Boots the Flutter engine; keep it last -->
     <script src="flutter_bootstrap.js" defer></script>
   </head>
 
@@ -36,4 +39,3 @@
     <!-- Flutter injects its <canvas> and a splash screen here. -->
   </body>
 </html>
-

@@ -9,6 +9,12 @@ import 'screens/home_screen.dart';
 import 'screens/register_screen.dart';
 import 'screens/profile_screen.dart'; // for /setup
 
+/// API base URL (can be overridden at compile-time)
+const String apiBase = String.fromEnvironment(
+  'API_BASE',
+  defaultValue: 'https://aoe2hdbets.com/api',
+);
+
 /// Flutter-web entry-point with aggressive error surfacing.
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
