@@ -1,5 +1,5 @@
 @JS('window')
-library keplr;
+library;
 
 import 'package:js/js.dart';
 
