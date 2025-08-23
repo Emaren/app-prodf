@@ -46,3 +46,7 @@ app.*.map.json
 .python-version
 venv-logs/
 
+bin/
+requirements.local.bak
+*.md
+*.ini
