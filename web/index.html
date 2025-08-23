@@ -21,11 +21,24 @@
     <!-- 👇  REQUIRED – ensures asset URLs resolve no matter the route -->
     <base href="/" />
 
-    <title>app_prodf</title>
+    <title>WoloChain – AoE2HD Bets</title>
 
-    <!-- 🚫  Prevent Flutter from registering a service-worker (stale cache) -->
+    <!-- 🚫 Prevent Flutter from registering a service-worker (stale cache) -->
     <script>
       const flutterServiceWorkerVersion = null;
+    </script>
+
+    <!-- 🧹 Explicitly unregister all existing service workers -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function () {
+          navigator.serviceWorker.getRegistrations().then(function (registrations) {
+            for (let registration of registrations) {
+              registration.unregister();
+            }
+          });
+        });
+      }
     </script>
 
     <!-- ✅ Inject the Keplr chain definition -->
@@ -33,6 +46,9 @@
 
     <!-- 🚀 Boots the Flutter engine; keep it last -->
     <script src="flutter_bootstrap.js" defer></script>
+
+    <!-- 📈 Plausible Analytics -->
+    <script defer data-domain="aoe2hdbets.com" src="https://plausible.io/js/script.js"></script>
   </head>
 
   <body>

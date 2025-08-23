@@ -1,1 +1,0 @@
-/Users/tonyblum/projects/llama-scripts/bin/cleanup-legacy-pyenvs.sh

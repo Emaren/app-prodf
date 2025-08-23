@@ -43,3 +43,5 @@ app.*.map.json
 /android/app/release
 .envrc
 .direnv/
+.python-version
+venv-logs/
